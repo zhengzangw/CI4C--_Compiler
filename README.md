@@ -46,7 +46,7 @@
 
 ### Lab 2
 
-TBD
+详见 [原项目](https://github.com/massimodong/compilers-tests#%E6%B7%BB%E5%8A%A0%E6%B5%8B%E8%AF%95%E6%96%87%E4%BB%B6)
 
 ## 本地持续集成
 
