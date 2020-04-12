@@ -1,0 +1,10 @@
+int a;
+int main(int a);
+int test(int a);
+struct a {
+	int a1 = 1;
+	int a1;
+};
+int main(){
+	struct a aa;
+}

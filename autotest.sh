@@ -99,16 +99,18 @@ fi
 for LAB in $LABS; do
 	echo "[In $LAB]"
 	if [[ -f $TEST_DIR/$LAB/check.sh ]]; then
-		source $TEST_DIR/$LAB/check.sh
+		CHECK_FUNC="sh $TEST_DIR/$LAB/check.sh"
+		CHECK_TYPE="out"
+	elif [[ -f $TEST_DIR/$LAB/check.py ]]; then
+		CHECK_FUNC="python $TEST_DIR/$LAB/check.py"
+		CHECK_TYPE="json"
 	else
-		alert "check.sh not exists"
+		alert "check.[sh|py] not exists"
 		continue
 	fi
 
 	if [[ -z $TEST_SET_NUM ]]; then
-		TESTS=("$(ls $TEST_DIR/$LAB)")
-		delete=(check.sh)
-		TESTS=${TESTS[@]/$delete/}
+		TESTS=("`ls $TEST_DIR/$LAB | grep -v \"check*\"`")
 	else
 		if ! [[ -d $TEST_DIR/$LAB/test-$TEST_SET_NUM ]]; then
 			alert "$LAB doesn't have test-$TEST_SET_NUM"
@@ -141,7 +143,7 @@ for LAB in $LABS; do
 		for fcmm in $TEST_FILES; do
 			cp $fcmm ${workdir}/a.cmm
 
-			if ! [[ -f ${fcmm%.cmm}.out ]]; then
+			if ! [[ -f ${fcmm%.cmm}.${CHECK_TYPE} ]]; then
 				echo -e "${RED}${BOLD}Test [$(basename $fcmm)] correct output not given${NC}${NORMAL}"
 				CODE=-1
 				if [[ "$QUIET" = false ]]; then
@@ -152,21 +154,23 @@ for LAB in $LABS; do
 				fi
 				continue
 			fi
-			cp ${fcmm%.cmm}.out ${workdir}/a.out
+			cp ${fcmm%.cmm}.${CHECK_TYPE} ${workdir}/a.${CHECK_TYPE}
 
-			$RUN ${workdir}/a.cmm >${workdir}/b.out 2>&1
-
-			if $(check ${workdir}/a.out ${workdir}/b.out); then
+			$RUN ${workdir}/a.cmm >${workdir}/yours.out 2>&1
+			$CHECK_FUNC ${workdir}/a.${CHECK_TYPE} ${workdir}/yours.out
+			if [ $? -eq 0 ]; then
 				echo "Test [$(basename $fcmm)] matched"
-				if [[ -n $NAME ]]; then
-					diff ${workdir}/a.out ${workdir}/b.out | head -10
+				if [[ -n $NAME && $CHECK_TYPE == "out" ]]; then
+					diff ${workdir}/a.${CHECK_TYPE} ${workdir}/yours.out | head -10
 				fi
 			else
 				echo -e "${RED}${BOLD}Test [$(basename $fcmm)] mismatch${NC}${NORMAL}"
 				if [[ "$LOG" = true ]]; then
 					echo "Test [$(basename $fcmm)] mismatch" >>$LOG_FILE
 				fi
-				diff ${workdir}/a.out ${workdir}/b.out | head -10
+				if [[ $CHECK_TYPE == "out" ]]; then
+					diff ${workdir}/a.${CHECK_TYPE} ${workdir}/yours.out | head -10
+				fi
 				CODE=-1
 				if [[ "$QUIET" = false ]]; then
 					read -p "Enter [c] to continue, other keys to abort: " txt
