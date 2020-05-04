@@ -26,7 +26,7 @@ alert() {
 	echo -e "${RED}${BOLD}$1${NORMAL}${NC}"
 }
 
-set -- $(getopt -n autotest.sh -o qhct:n:l: -l quiet,help,clean,log,test:,name:,lab: -u -- "$@")
+set -- $(getopt -n autotest.sh -o qhct:n:l: -l quiet,help,ins,clean,log,test:,name:,lab: -u -- "$@")
 
 if [ $? -ne 0 ]; then
 	usage
@@ -62,6 +62,11 @@ while true; do
 		;;
 	--log)
 		LOG=true
+		shift
+		;;
+	--ins)
+		INSTR=true
+		num_instr="0"
 		shift
 		;;
 	--)
@@ -110,7 +115,8 @@ for LAB in $LABS; do
 	fi
 
 	if [[ -z $TEST_SET_NUM ]]; then
-		TESTS=("`ls $TEST_DIR/$LAB | grep -v \"check*\"`")
+		_TESTS="`ls $TEST_DIR/$LAB | grep -v \"check*\"`"
+		TESTS=($_TESTS)
 	else
 		if ! [[ -d $TEST_DIR/$LAB/test-$TEST_SET_NUM ]]; then
 			alert "$LAB doesn't have test-$TEST_SET_NUM"
@@ -158,8 +164,13 @@ for LAB in $LABS; do
 
 			$RUN ${workdir}/a.cmm >${workdir}/yours.out 2>&1
 			$CHECK_FUNC ${workdir}/a.${CHECK_TYPE} ${workdir}/yours.out
+			if [[ "$INSTR" = true ]]; then
+				instr_c="$(wc -l ${workdir}/yours.out | awk '{print $1}')"
+				num_instr=$(expr $num_instr + $instr_c)
+				instruction="(Instruction: $instr_c)"
+			fi
 			if [ $? -eq 0 ]; then
-				echo "Test [$(basename $fcmm)] matched"
+				echo "Test [$(basename $fcmm)] matched $instruction"
 				if [[ -n $NAME && $CHECK_TYPE == "out" ]]; then
 					diff ${workdir}/a.${CHECK_TYPE} ${workdir}/yours.out | head -10
 				fi
@@ -185,5 +196,8 @@ done
 
 if [[ $CODE -eq "0" && "$LOG" = true ]]; then
 	echo "All Success" >>$LOG_FILE
+fi
+if [[ "$INSTR" = true ]]; then
+	echo "Total Instructions: $num_instr"
 fi
 exit $CODE
