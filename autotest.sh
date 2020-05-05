@@ -33,6 +33,7 @@ if [ $? -ne 0 ]; then
 	exit -1
 fi
 
+QUIET=false
 while true; do
 	case "$1" in
 	-q | --quiet)
@@ -95,6 +96,7 @@ fi
 
 # TEST
 CODE=0
+echo 0 > $workdir/count
 if [[ -z $LAB_NUM ]]; then
 	LABS=("$(ls $TEST_DIR)")
 else
@@ -150,7 +152,7 @@ for LAB in $LABS; do
 			cp $fcmm ${workdir}/a.cmm
 
 			if ! [[ -f ${fcmm%.cmm}.${CHECK_TYPE} ]]; then
-				echo -e "${RED}${BOLD}Test [$(basename $fcmm)] correct output not given${NC}${NORMAL}"
+				alert "Test [$(basename $fcmm)] correct output not given"
 				CODE=-1
 				if [[ "$QUIET" = false ]]; then
 					read -p "Enter [c] to continue, other keys to abort: " txt
@@ -164,18 +166,19 @@ for LAB in $LABS; do
 
 			$RUN ${workdir}/a.cmm >${workdir}/yours.out 2>&1
 			$CHECK_FUNC ${workdir}/a.${CHECK_TYPE} ${workdir}/yours.out
+			RET=$?
 			if [[ "$INSTR" = true ]]; then
 				instr_c="$(wc -l ${workdir}/yours.out | awk '{print $1}')"
 				num_instr=$(expr $num_instr + $instr_c)
-				instruction="(Instruction: $instr_c)"
+				instruction="(translated irs: $instr_c)"
 			fi
-			if [ $? -eq 0 ]; then
+			if [ $RET -eq 0 ]; then
 				echo "Test [$(basename $fcmm)] matched $instruction"
 				if [[ -n $NAME && $CHECK_TYPE == "out" ]]; then
 					diff ${workdir}/a.${CHECK_TYPE} ${workdir}/yours.out | head -10
 				fi
 			else
-				echo -e "${RED}${BOLD}Test [$(basename $fcmm)] mismatch${NC}${NORMAL}"
+				alert "Test [$(basename $fcmm)] mismatch"
 				if [[ "$LOG" = true ]]; then
 					echo "Test [$(basename $fcmm)] mismatch" >>$LOG_FILE
 				fi
@@ -198,6 +201,7 @@ if [[ $CODE -eq "0" && "$LOG" = true ]]; then
 	echo "All Success" >>$LOG_FILE
 fi
 if [[ "$INSTR" = true ]]; then
-	echo "Total Instructions: $num_instr"
+	echo "Total translated IR: $num_instr"
+	echo "Total executed IR: $(cat $workdir/count)"
 fi
 exit $CODE
