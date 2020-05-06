@@ -165,6 +165,7 @@ for LAB in $LABS; do
 			cp ${fcmm%.cmm}.${CHECK_TYPE} ${workdir}/a.${CHECK_TYPE}
 
 			$RUN ${workdir}/a.cmm >${workdir}/yours.out 2>&1
+			echo "here"
 			$CHECK_FUNC ${workdir}/a.${CHECK_TYPE} ${workdir}/yours.out
 			RET=$?
 			if [[ "$INSTR" = true ]]; then
