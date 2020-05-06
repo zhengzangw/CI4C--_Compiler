@@ -3,7 +3,7 @@ name: Run Tests
 on: push
 
 jobs:
-  test:
+  testall:
     runs-on: ubuntu-18.04
     steps:
       - name: Install Toolchain
@@ -19,6 +19,11 @@ jobs:
           repository: zhengzangw/C--_Compiler
           token: ${{ secrets.GITHUB_PAT }}
           submodules: true
+
+      - name: Make irsim
+        run: |
+          cd irsim
+          make
 
       - name: Test all
         run: |
