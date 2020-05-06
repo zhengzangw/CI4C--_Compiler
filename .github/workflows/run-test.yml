@@ -18,7 +18,7 @@ jobs:
         with:
           repository: zhengzangw/C--_Compiler
           token: ${{ secrets.GITHUB_PAT }}
-          submodule: true
+          submodules: true
 
       - name: Test all
         run: |
