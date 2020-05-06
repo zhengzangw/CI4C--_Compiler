@@ -93,7 +93,7 @@ if ! [ -x $RUN ]; then
 	echo "Error: file \"$RUN\" is not executable"
 	exit -1
 fi
-echo "Before Test"
+
 # TEST
 CODE=0
 echo 0 >$workdir/count
@@ -165,7 +165,7 @@ for LAB in $LABS; do
 			cp ${fcmm%.cmm}.${CHECK_TYPE} ${workdir}/a.${CHECK_TYPE}
 
 			$RUN ${workdir}/a.cmm >${workdir}/yours.out 2>&1
-			echo "here"
+
 			$CHECK_FUNC ${workdir}/a.${CHECK_TYPE} ${workdir}/yours.out
 			RET=$?
 			if [[ "$INSTR" = true ]]; then
