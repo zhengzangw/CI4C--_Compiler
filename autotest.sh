@@ -93,7 +93,7 @@ if ! [ -x $RUN ]; then
 	echo "Error: file \"$RUN\" is not executable"
 	exit -1
 fi
-
+echo "Before Test"
 # TEST
 CODE=0
 echo 0 >$workdir/count
@@ -106,7 +106,7 @@ fi
 for LAB in $LABS; do
 	echo "[In $LAB]"
 	if [[ -f $TEST_DIR/$LAB/check.sh ]]; then
-		CHECK_FUNC="sh $TEST_DIR/$LAB/check.sh"
+		CHECK_FUNC="./$TEST_DIR/$LAB/check.sh"
 		CHECK_TYPE="out"
 	elif [[ -f $TEST_DIR/$LAB/check.py ]]; then
 		CHECK_FUNC="python $TEST_DIR/$LAB/check.py"
@@ -117,7 +117,7 @@ for LAB in $LABS; do
 	fi
 
 	if [[ -z $TEST_SET_NUM ]]; then
-		_TESTS="$(ls $TEST_DIR/$LAB | grep -v \"check*\")"
+		_TESTS="`ls $TEST_DIR/$LAB | grep -v \"check*\"`"
 		TESTS=($_TESTS)
 	else
 		if ! [[ -d $TEST_DIR/$LAB/test-$TEST_SET_NUM ]]; then
