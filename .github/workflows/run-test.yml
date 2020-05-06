@@ -27,7 +27,7 @@ jobs:
 
       - name: Test all
         run: |
-          chmod +x autotest.sh
+          chmod +x CI4C--_Compiler/autotest.sh
           make testall
 
       - name: Upload Result
