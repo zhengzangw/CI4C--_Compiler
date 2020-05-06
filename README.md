@@ -77,17 +77,6 @@
 
 ## 本地持续集成
 
-由于实验规定不能修改 Code 目录中的 Makfile，可以在 Lab 目录中新建 `makefile`，在原来的 makefile 基础上做以下修改，并对应修改 `clean` 命令中的参数即可。
-
-```diff
-SRC = Code
-CFILES = $(shell find ./$(SRC)/ -name "*.c")
-LFILE = $(shell find ./$(SRC)/ -name "*.l")
-YFILE = $(shell find ./$(SRC)/ -name "*.y")
-LFC = $(shell find ./$(SRC)/ -name "*.l" | sed s/[^/]*\\.l/lex.yy.c/)
-YFC = $(shell find ./$(SRC)/ -name "*.y" | sed s/[^/]*\\.y/syntax.tab.c/)
-```
-
 可参考 *未公开* 中的 makefile。
 
 ## Github 持续集成
