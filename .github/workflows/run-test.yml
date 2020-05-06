@@ -27,10 +27,9 @@ jobs:
 
       - name: Test all
         run: |
-          pwd
-          ls
-          chmod +x CI4C--_Compiler/autotest.sh
+          ls CI4C--_Compiler
           make testall
+          chmod +x ./CI4C--_Compiler/autotest.sh
 
       - name: Upload Result
         uses: actions/upload-artifact@v1
