@@ -27,10 +27,10 @@ jobs:
 
       - name: Test all
         run: |
-          make testall
+          make testall | tee log.txt
 
-      - name: Upload Result
-        uses: actions/upload-artifact@v1
+      - name: Upload Log
+        uses: actions/upload-artifact@v2
         with:
-          name: result
-          path: result.txt
+          name: log
+          path: log.txt
