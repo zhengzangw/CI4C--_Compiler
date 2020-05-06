@@ -13,17 +13,12 @@ jobs:
           flex --version
           bison --version
 
-      - name: Checkout Tests
-        uses: actions/checkout@v2
-        with:
-          path: CI4C--_Compiler
-
       - name: Checkout Lab Codes
         uses: actions/checkout@v2
         with:
           repository: zhengzangw/C--_Compiler
           token: ${{ secrets.GITHUB_PAT }}
-          path: .
+          submodule: true
 
       - name: Test all
         run: |
