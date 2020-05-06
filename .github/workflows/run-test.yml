@@ -27,6 +27,8 @@ jobs:
 
       - name: Test all
         run: |
+          ls
+          ls "CI4C--_Compiler"
           make testall
 
       - name: Upload Result
