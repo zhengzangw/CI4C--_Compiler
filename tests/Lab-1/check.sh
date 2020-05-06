@@ -1,3 +1,4 @@
+#!/bin/bash
 FL1=$(head -1 $1)
 FL2=$(head -1 $2)
 

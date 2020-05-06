@@ -21,9 +21,9 @@ usage() {
 alert() {
 	RED='\033[0;31m'
 	NC='\033[0m'
-	BOLD=$(tput bold)
-	NORMAL=$(tput sgr0)
-	echo -e "${RED}${BOLD}$1${NORMAL}${NC}"
+	#BOLD=$(tput bold)
+	#NORMAL=$(tput sgr0)
+	echo -e "${RED}$1${NC}"
 }
 
 set -- $(getopt -n autotest.sh -o qhct:n:l: -l quiet,help,ins,clean,log,test:,name:,lab: -u -- "$@")
@@ -96,7 +96,7 @@ fi
 
 # TEST
 CODE=0
-echo 0 > $workdir/count
+echo 0 >$workdir/count
 if [[ -z $LAB_NUM ]]; then
 	LABS=("$(ls $TEST_DIR)")
 else
@@ -117,7 +117,7 @@ for LAB in $LABS; do
 	fi
 
 	if [[ -z $TEST_SET_NUM ]]; then
-		_TESTS="`ls $TEST_DIR/$LAB | grep -v \"check*\"`"
+		_TESTS="$(ls $TEST_DIR/$LAB | grep -v \"check*\")"
 		TESTS=($_TESTS)
 	else
 		if ! [[ -d $TEST_DIR/$LAB/test-$TEST_SET_NUM ]]; then
