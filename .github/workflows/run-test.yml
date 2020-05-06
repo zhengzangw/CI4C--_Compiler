@@ -15,23 +15,20 @@ jobs:
 
       - name: Checkout Tests
         uses: actions/checkout@v2
+        with:
+          path: CI4C--_Compiler
 
       - name: Checkout Lab Codes
         uses: actions/checkout@v2
         with:
           repository: zhengzangw/C--_Compiler
           token: ${{ secrets.GITHUB_PAT }}
-          path: Lab
+          path: .
 
-      - name: Build Lab Binary
-        run: |
-          cd Lab
-          make parser
-
-      - name: Run Test
+      - name: Test all
         run: |
           chmod +x autotest.sh
-          ./autotest.sh Lab/parser -l 2 | tee result.txt
+          make testall
 
       - name: Upload Result
         uses: actions/upload-artifact@v1
