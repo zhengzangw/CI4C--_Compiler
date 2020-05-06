@@ -27,6 +27,7 @@ jobs:
 
       - name: Test all
         run: |
+          pwd
           chmod +x CI4C--_Compiler/autotest.sh
           make testall
 
