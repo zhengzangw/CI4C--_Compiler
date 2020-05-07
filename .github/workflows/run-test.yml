@@ -4,7 +4,7 @@ on: push
 
 jobs:
   testall:
-    runs-on: ubuntu-16.04
+    runs-on: ubuntu-18.04
     steps:
       - name: Install Toolchain
         run: |
@@ -35,3 +35,25 @@ jobs:
         with:
           name: log
           path: log.txt
+
+  build:
+    runs-on: ubuntu-16.04
+    steps:
+      - name: Install Toolchain
+        run: |
+          sudo apt-get update
+          sudo apt-get install -yq bison flex
+          flex --version
+          bison --version
+          gcc -v
+
+      - name: Checkout Lab Codes
+        uses: actions/checkout@v2
+        with:
+          repository: zhengzangw/C--_Compiler
+          token: ${{ secrets.GITHUB_PAT }}
+
+      - name: Build
+        run: |
+          make
+
