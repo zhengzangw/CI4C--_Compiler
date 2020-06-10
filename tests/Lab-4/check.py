@@ -31,7 +31,10 @@ for data_in, data_out, ret_val in json.load(open(f_json)):
         err(data_in, data_out, "Runtime error occured when running your mips code")
         # Output mismatch
     with open(irsim_out, 'r') as from_irsim_r:
-        from_irsim_r.readline()  # Filter out the first line "Loaded: ./workdir/a.ir"
+        # Filter out the line above "Loaded: ./workdir/a.ir"
+        temp_str = from_irsim_r.readline()
+        while temp_str[:6] != "Loaded":
+            temp_str = from_irsim_r.readline()
         your_output = []
         try:
             temp_str = from_irsim_r.readline()
